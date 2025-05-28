@@ -1,4 +1,0 @@
-/Users/fedorbelov/Documents/Second_Laba_C++/build/CMakeFiles/Tests.dir
-/Users/fedorbelov/Documents/Second_Laba_C++/build/CMakeFiles/Lab2.dir
-/Users/fedorbelov/Documents/Second_Laba_C++/build/CMakeFiles/edit_cache.dir
-/Users/fedorbelov/Documents/Second_Laba_C++/build/CMakeFiles/rebuild_cache.dir
