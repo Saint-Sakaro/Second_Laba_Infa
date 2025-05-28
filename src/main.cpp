@@ -64,11 +64,12 @@ void showMutableMenu() {
     std::cout << "15. Unzip последовательности пар" << std::endl;
     std::cout << "16. Slice последовательности" << std::endl;
     std::cout << "17. FlatMap (удвоить каждый элемент)" << std::endl;
-    std::cout << "18. Найти первое четное число" << std::endl;
-    std::cout << "19. Разделить на четные/нечетные" << std::endl;
+    std::cout << "18. Найти первое четное число (Find)" << std::endl;
+    std::cout << "19. Разделить на четные/нечетные (Split)" << std::endl;
     std::cout << "20. Создать из массива" << std::endl;
     std::cout << "21. Вывести последовательность" << std::endl;
-    std::cout << "22. Вернуться в главное меню" << std::endl;
+    std::cout << "22. Concat с другой последовательностью" << std::endl;
+    std::cout << "23. Вернуться в главное меню" << std::endl;
     std::cout << "Введите выбор: ";
 }
 
@@ -91,12 +92,13 @@ void showImmutableMenu() {
     std::cout << "14. Zip с другой последовательностью" << std::endl;
     std::cout << "15. Slice последовательности" << std::endl;
     std::cout << "16. FlatMap (удвоить каждый элемент)" << std::endl;
-    std::cout << "17. Найти первое четное число" << std::endl;
-    std::cout << "18. Разделить на четные/нечетные" << std::endl;
+    std::cout << "17. Найти первое четное число (Find)" << std::endl;
+    std::cout << "18. Разделить на четные/нечетные (Split)" << std::endl;
     std::cout << "19. Unzip последовательности пар" << std::endl;
     std::cout << "20. Создать из массива" << std::endl;
     std::cout << "21. Вывести последовательность" << std::endl;
-    std::cout << "22. Вернуться в главное меню" << std::endl;
+    std::cout << "22. Concat с другой последовательностью" << std::endl;
+    std::cout << "23. Вернуться в главное меню" << std::endl;
     std::cout << "Введите выбор: ";
 }
 
@@ -401,7 +403,16 @@ void handleMutableSequence(Sequence<int>* seq) {
                 std::cout << "Current sequence: ";
                 printSequence(seq);
             }
-            else if (choice == 22) { // Back to main menu
+            else if (choice == 22) { // Concat
+                std::cout << "Создайте вторую последовательность для операции Concat." << std::endl;
+                Sequence<int>* other = createMutableSequence<int>(true);
+                Sequence<int>* result = seq->Concat(other);
+                std::cout << "Результат Concat: ";
+                printSequence(result);
+                delete other;
+                delete result;
+            }
+            else if (choice == 23) { // Back to main menu
                 break;
             }
             else {
@@ -675,7 +686,16 @@ void handleImmutableSequence(Sequence<int>* seq) {
                 std::cout << "Текущая последовательность: ";
                 printSequence(seq);
             }
-            else if (choice == 22) { // Back to main menu
+            else if (choice == 22) { // Concat
+                std::cout << "Создайте вторую последовательность для операции Concat." << std::endl;
+                Sequence<int>* other = createImmutableSequence<int>(true);
+                Sequence<int>* result = seq->Concat(other);
+                std::cout << "Результат Concat: ";
+                printSequence(result);
+                delete other;
+                delete result;
+            }
+            else if (choice == 23) { // Back to main menu
                 break;
             }
             else {

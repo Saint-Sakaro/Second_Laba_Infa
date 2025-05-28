@@ -203,4 +203,18 @@ public:
 
         return std::make_pair(matching, notMatching);
     }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ArraySequence<T>* result = new ArraySequence<T>();
+        
+        for (int i = 0; i < array.GetSize(); ++i) {
+            result->Append(array.Get(i));
+        }
+        
+        for (int i = 0; i < other->GetLength(); ++i) {
+            result->Append(other->Get(i));
+        }
+        
+        return result;
+    }
 };

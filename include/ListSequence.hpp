@@ -184,4 +184,18 @@ public:
 
         return std::make_pair(matching, notMatching);
     }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ListSequence<T>* result = new ListSequence<T>();
+        
+        for (int i = 0; i < list.GetSize(); ++i) {
+            result->Append(list.Get(i));
+        }
+        
+        for (int i = 0; i < other->GetLength(); ++i) {
+            result->Append(other->Get(i));
+        }
+        
+        return result;
+    }
 };

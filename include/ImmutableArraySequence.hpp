@@ -136,7 +136,21 @@ public:
                 falseSeq = static_cast<ImmutableArraySequence<T>*>(falseSeq->AppendNew(array.Get(i)));
             }
         }
-        
         return std::make_pair(trueSeq, falseSeq);
     }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ImmutableArraySequence<T>* result = new ImmutableArraySequence<T>();
+        
+        for (int i = 0; i < array.GetSize(); ++i) {
+            result = static_cast<ImmutableArraySequence<T>*>(result->AppendNew(array.Get(i)));
+        }
+    
+        for (int i = 0; i < other->GetLength(); ++i) {
+            result = static_cast<ImmutableArraySequence<T>*>(result->AppendNew(other->Get(i)));
+        }
+        
+        return result;
+    }
 };
+

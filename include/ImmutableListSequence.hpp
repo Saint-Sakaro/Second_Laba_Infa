@@ -127,4 +127,18 @@ public:
 
         return std::make_pair(matching, notMatching);
     }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        ImmutableListSequence<T>* result = new ImmutableListSequence<T>();
+        
+        for (int i = 0; i < list.GetSize(); ++i) {
+            result = static_cast<ImmutableListSequence<T>*>(result->AppendNew(list.Get(i)));
+        }
+        
+        for (int i = 0; i < other->GetLength(); ++i) {
+            result = static_cast<ImmutableListSequence<T>*>(result->AppendNew(other->Get(i)));
+        }
+        
+        return result;
+    }
 };

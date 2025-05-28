@@ -64,6 +64,11 @@ public:
     std::pair<Sequence<T>*, Sequence<T>*> Split(bool (*predicate)(const T&)) const override {
         return std::make_pair(nullptr, nullptr); // Заглушка для тестов
     }
+
+    Sequence<T>* Concat(const Sequence<T>* other) const override {
+        auto* result = new MockSequence<T>(nullptr, 0);
+        return result; // Заглушка для тестов
+    }
 };
 
 // Тест для исключений
@@ -846,6 +851,66 @@ TEST(SequenceTest, GetSubsequenceEdgeCases) {
     EXPECT_THROW(seq.GetSubsequence(-1, 2), IndexOutOfRangeException);
     EXPECT_THROW(seq.GetSubsequence(3, 2), IndexOutOfRangeException);
     EXPECT_THROW(seq.GetSubsequence(0, 5), IndexOutOfRangeException);
+}
+
+TEST(SequenceTest, ConcatTest) {
+    // Тест для ArraySequence
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5, 6};
+    ArraySequence<int> arraySeq1(data1, 3);
+    ArraySequence<int> arraySeq2(data2, 3);
+    
+    Sequence<int>* arrayResult = arraySeq1.Concat(&arraySeq2);
+    EXPECT_EQ(arrayResult->GetLength(), 6);
+    EXPECT_EQ(arrayResult->Get(0), 1);
+    EXPECT_EQ(arrayResult->Get(1), 2);
+    EXPECT_EQ(arrayResult->Get(2), 3);
+    EXPECT_EQ(arrayResult->Get(3), 4);
+    EXPECT_EQ(arrayResult->Get(4), 5);
+    EXPECT_EQ(arrayResult->Get(5), 6);
+    delete arrayResult;
+
+    // Тест для ListSequence
+    ListSequence<int> listSeq1(data1, 3);
+    ListSequence<int> listSeq2(data2, 3);
+    
+    Sequence<int>* listResult = listSeq1.Concat(&listSeq2);
+    EXPECT_EQ(listResult->GetLength(), 6);
+    EXPECT_EQ(listResult->Get(0), 1);
+    EXPECT_EQ(listResult->Get(1), 2);
+    EXPECT_EQ(listResult->Get(2), 3);
+    EXPECT_EQ(listResult->Get(3), 4);
+    EXPECT_EQ(listResult->Get(4), 5);
+    EXPECT_EQ(listResult->Get(5), 6);
+    delete listResult;
+
+    // Тест для ImmutableArraySequence
+    ImmutableArraySequence<int> immArraySeq1(data1, 3);
+    ImmutableArraySequence<int> immArraySeq2(data2, 3);
+    
+    Sequence<int>* immArrayResult = immArraySeq1.Concat(&immArraySeq2);
+    EXPECT_EQ(immArrayResult->GetLength(), 6);
+    EXPECT_EQ(immArrayResult->Get(0), 1);
+    EXPECT_EQ(immArrayResult->Get(1), 2);
+    EXPECT_EQ(immArrayResult->Get(2), 3);
+    EXPECT_EQ(immArrayResult->Get(3), 4);
+    EXPECT_EQ(immArrayResult->Get(4), 5);
+    EXPECT_EQ(immArrayResult->Get(5), 6);
+    delete immArrayResult;
+
+    // Тест для ImmutableListSequence
+    ImmutableListSequence<int> immListSeq1(data1, 3);
+    ImmutableListSequence<int> immListSeq2(data2, 3);
+    
+    Sequence<int>* immListResult = immListSeq1.Concat(&immListSeq2);
+    EXPECT_EQ(immListResult->GetLength(), 6);
+    EXPECT_EQ(immListResult->Get(0), 1);
+    EXPECT_EQ(immListResult->Get(1), 2);
+    EXPECT_EQ(immListResult->Get(2), 3);
+    EXPECT_EQ(immListResult->Get(3), 4);
+    EXPECT_EQ(immListResult->Get(4), 5);
+    EXPECT_EQ(immListResult->Get(5), 6);
+    delete immListResult;
 }
 
 int main(int argc, char **argv) {

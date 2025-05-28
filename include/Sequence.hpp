@@ -31,4 +31,5 @@ public:
     virtual Sequence<T>* FlatMap(Sequence<T>* (*func)(const T&)) const = 0;
     virtual Option<T> Find(bool (*predicate)(const T&)) const = 0;
     virtual std::pair<Sequence<T>*, Sequence<T>*> Split(bool (*predicate)(const T&)) const = 0;
+    virtual Sequence<T>* Concat(const Sequence<T>* other) const = 0;
 };
