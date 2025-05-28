@@ -15,6 +15,37 @@ template <typename T>
 class MockSequence : public Sequence<T> {
 private:
     DynamicArray<T> data;
+    
+    class MockEnumerator : public IEnumerator<T> {
+    private:
+        const DynamicArray<T>& array;
+        int currentIndex;
+        T currentValue;
+        
+    public:
+        explicit MockEnumerator(const DynamicArray<T>& arr) : array(arr), currentIndex(-1) {}
+        
+        bool MoveNext() override {
+            if (currentIndex + 1 < array.GetSize()) {
+                currentIndex++;
+                currentValue = array.Get(currentIndex);
+                return true;
+            }
+            return false;
+        }
+        
+        const T& Current() const override {
+            if (currentIndex < 0 || currentIndex >= array.GetSize()) {
+                throw InvalidStateException("Enumerator is not in a valid position");
+            }
+            return currentValue;
+        }
+        
+        void Reset() override {
+            currentIndex = -1;
+        }
+    };
+    
 public:
     MockSequence(const T* items, int size) : data(items, size) {}
     T Get(int index) const override { return data.Get(index); }
@@ -68,6 +99,10 @@ public:
     Sequence<T>* Concat(const Sequence<T>* other) const override {
         auto* result = new MockSequence<T>(nullptr, 0);
         return result; // Заглушка для тестов
+    }
+
+    IEnumerator<T>* GetEnumerator() const override {
+        return new MockEnumerator(data);
     }
 };
 
@@ -911,6 +946,82 @@ TEST(SequenceTest, ConcatTest) {
     EXPECT_EQ(immListResult->Get(4), 5);
     EXPECT_EQ(immListResult->Get(5), 6);
     delete immListResult;
+}
+
+TEST(EnumeratorTest, ArraySequenceEnumerator) {
+    int items[] = {1, 2, 3, 4, 5};
+    ArraySequence<int> seq(items, 5);
+    
+    IEnumerator<int>* enumerator = seq.GetEnumerator();
+    
+    // Проверяем, что изначально Current() бросает исключение
+    EXPECT_THROW(enumerator->Current(), InvalidStateException);
+    
+    // Проверяем последовательный обход
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 1);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 2);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 3);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 4);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 5);
+    
+    // Проверяем, что после последнего элемента MoveNext() возвращает false
+    EXPECT_FALSE(enumerator->MoveNext());
+    
+    // Проверяем Reset()
+    enumerator->Reset();
+    EXPECT_THROW(enumerator->Current(), InvalidStateException);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 1);
+    
+    delete enumerator;
+}
+
+TEST(EnumeratorTest, ListSequenceEnumerator) {
+    int items[] = {1, 2, 3, 4, 5};
+    ListSequence<int> seq(items, 5);
+    
+    IEnumerator<int>* enumerator = seq.GetEnumerator();
+    
+    // Проверяем, что изначально Current() бросает исключение
+    EXPECT_THROW(enumerator->Current(), InvalidStateException);
+    
+    // Проверяем последовательный обход
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 1);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 2);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 3);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 4);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 5);
+    
+    // Проверяем, что после последнего элемента MoveNext() возвращает false
+    EXPECT_FALSE(enumerator->MoveNext());
+    
+    // Проверяем Reset()
+    enumerator->Reset();
+    EXPECT_THROW(enumerator->Current(), InvalidStateException);
+    
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(enumerator->Current(), 1);
+    
+    delete enumerator;
 }
 
 int main(int argc, char **argv) {

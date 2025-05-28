@@ -2,12 +2,44 @@
 #include <utility>
 #include "Sequence.hpp"
 #include "DynamicArray.hpp"
+#include "Exceptions.hpp"
 
-// Шаблонный класс ArraySequence<T>, реализующий Sequence<T> на основе DynamicArray<T>
 template <typename T>
 class ArraySequence : public Sequence<T> {
 protected:
     DynamicArray<T> array;
+
+private:
+    class ArraySequenceEnumerator : public IEnumerator<T> {
+    private:
+        const DynamicArray<T>& array;
+        int currentIndex;
+        T currentValue;
+
+    public:
+        explicit ArraySequenceEnumerator(const DynamicArray<T>& array) 
+            : array(array), currentIndex(-1) {}
+
+        bool MoveNext() override {
+            if (currentIndex + 1 < array.GetSize()) {
+                currentIndex++;
+                currentValue = array.Get(currentIndex);
+                return true;
+            }
+            return false;
+        }
+
+        const T& Current() const override {
+            if (currentIndex < 0 || currentIndex >= array.GetSize()) {
+                throw InvalidStateException("Enumerator is not in a valid position");
+            }
+            return currentValue;
+        }
+
+        void Reset() override {
+            currentIndex = -1;
+        }
+    };
 
 public:
     ArraySequence() = default;
@@ -216,5 +248,9 @@ public:
         }
         
         return result;
+    }
+
+    IEnumerator<T>* GetEnumerator() const override {
+        return new ArraySequenceEnumerator(array);
     }
 };

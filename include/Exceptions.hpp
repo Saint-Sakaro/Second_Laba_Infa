@@ -37,3 +37,8 @@ public:
     InvalidOperationException(const std::string& message = "Invalid operation")
         : SequenceException(message) {}
 };
+
+class InvalidStateException : public SequenceException {
+public:
+    explicit InvalidStateException(const std::string& message) : SequenceException(message) {}
+};

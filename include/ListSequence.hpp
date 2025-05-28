@@ -2,11 +2,47 @@
 #include <utility>
 #include "Sequence.hpp"
 #include "LinkedList.hpp"
+#include "Exceptions.hpp"
 
 template <typename T>
 class ListSequence : public Sequence<T> {
 protected:
     LinkedList<T> list;
+
+private:
+    class LinkedListEnumerator : public IEnumerator<T> {
+    private:
+        const LinkedList<T>& list;
+        int currentIndex;
+        T currentValue;
+        bool isBeforeFirst;
+
+    public:
+        explicit LinkedListEnumerator(const LinkedList<T>& list) 
+            : list(list), currentIndex(-1), isBeforeFirst(true) {}
+
+        bool MoveNext() override {
+            if (currentIndex + 1 < list.GetSize()) {
+                currentIndex++;
+                currentValue = list.Get(currentIndex);
+                isBeforeFirst = false;
+                return true;
+            }
+            return false;
+        }
+
+        const T& Current() const override {
+            if (isBeforeFirst || currentIndex >= list.GetSize()) {
+                throw InvalidStateException("Enumerator is not in a valid position");
+            }
+            return currentValue;
+        }
+
+        void Reset() override {
+            currentIndex = -1;
+            isBeforeFirst = true;
+        }
+    };
 
 public:
     ListSequence() = default;
@@ -197,5 +233,9 @@ public:
         }
         
         return result;
+    }
+
+    IEnumerator<T>* GetEnumerator() const override {
+        return new LinkedListEnumerator(list);
     }
 };
